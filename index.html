@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bir Şekerli Bi Sade Filmler</title>
+  <style>
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1f1f1f;
+      --text-color: #ffffff;
+      --text-sub: #aaa;
+      --header-bg: #1f1f1f;
+      --accent: #e50914;
+      --input-bg: #333;
+      --border-color: #282828;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f4f4f9;
+      --card-bg: #ffffff;
+      --text-color: #121212;
+      --text-sub: #666;
+      --header-bg: #ffffff;
+      --accent: #e50914;
+      --input-bg: #e0e0e0;
+      --border-color: #ddd;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 30px;
+    }
+
+    header {
+      background-color: var(--header-bg);
+      padding: 15px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
+
+    .brand-container {
+      text-align: center;
+    }
+
+    h1 {
+      color: var(--accent);
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+
+    .creator-tag {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 2px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .creator-tag span {
+      color: var(--accent);
+      font-weight: bold;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      background-color: var(--input-bg);
+      color: var(--text-sub);
+      border: none;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    .random-btn {
+      background-color: #388e3c;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .search-box {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px 0 0 20px;
+      outline: none;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 0.95rem;
+    }
+
+    .search-box button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 0 20px 20px 0;
+      background-color: var(--accent);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Türler Barı */
+    .genres-container {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 15px;
+      white-space: nowrap;
+      background-color: var(--header-bg);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .genres-container::-webkit-scrollbar { display: none; }
+
+    .genre-chip {
+      padding: 6px 14px;
+      background-color: var(--input-bg);
+      color: var(--text-sub);
+      border-radius: 15px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+
+    .genre-chip.active {
+      background-color: var(--accent);
+      color: #ffffff;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 15px;
+    }
+
+    .movie-card {
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .movie-card:active { transform: scale(0.96); }
+
+    .movie-card img {
+      width: 100%;
+      height: 195px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .movie-info { padding: 10px; }
+
+    .movie-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-rating {
+      display: inline-block;
+      margin-top: 5px;
+      font-size: 0.8rem;
+      color: #f3ce13;
+      font-weight: bold;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 12px;
+      max-width: 500px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px; right: 15px;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+      background: rgba(0,0,0,0.5);
+      width: 35px; height: 35px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .modal-banner {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .modal-body { padding: 20px; }
+
+    .modal-title {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+      color: var(--accent);
+    }
+
+    .modal-meta {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    .modal-overview {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 15px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    /* PROVIDERS (NEREDEN İZLENİR) */
+    .providers-section {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: var(--input-bg);
+      border-radius: 8px;
+    }
+
+    .providers-title {
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--text-sub);
+      text-transform: uppercase;
+    }
+
+    .providers-list {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .provider-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card-bg);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s;
+    }
+
+    .provider-badge:active {
+      transform: scale(0.95);
+    }
+
+    .provider-badge img {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+    }
+
+    .trailer-btn {
+      display: inline-block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent);
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    
+    <div class="brand-container">
+      <h1 id="siteLogo">☕ Bir Şekerli Bi Sade Filmler</h1>
+      <div class="creator-tag">Kurucular: <span>Lewzon & Gemini</span></div>
+    </div>
+    
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="moviesTab">🎬 Filmler</button>
+      <button class="tab-btn" id="tvTab">📺 Diziler</button>
+      <button class="random-btn" id="randomBtn">🎲 Sürpriz Getir</button>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Film veya Dizi ara...">
+      <button id="searchBtn">Ara</button>
+    </div>
+  </header>
+
+  <!-- KATEGORİ BARI -->
+  <div class="genres-container" id="genresBar">
+    <div class="genre-chip active" data-id="">Tümü</div>
+  </div>
+
+  <div class="container">
+    <h2 class="section-title" id="pageTitle">Popüler Filmler</h2>
+    <div class="movies-grid" id="moviesGrid"></div>
+  </div>
+
+  <!-- DETAY MODAL -->
+  <div class="modal" id="movieModal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <img src="" id="modalBanner" class="modal-banner" alt="Banner">
+      <div class="modal-body">
+        <h3 id="modalTitle" class="modal-title">Başlık</h3>
+        <div id="modalMeta" class="modal-meta">Meta</div>
+        <p id="modalOverview" class="modal-overview">Özet...</p>
+
+        <!-- NEREDEN İZLENİR BÖLÜMÜ -->
+        <div class="providers-section">
+          <div class="providers-title">📺 Nereden İzlenebilir?</div>
+          <div class="providers-list" id="providersList">
+            <span style="font-size:0.8rem; color:var(--text-sub);">Yükleniyor...</span>
+          </div>
+        </div>
+
+        <button id="trailerBtn" class="trailer-btn">▶ Fragmanı İzle</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    const API_KEY = 'b3fe27b55bdcab2c4a1df4001e02c2b4'; 
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMAGE_URL = 'https://image.tmdb.org/t/p/w500';
+    const BACKDROP_URL = 'https://image.tmdb.org/t/p/w780';
+
+    let currentMediaType = 'movie'; 
+    let selectedGenreId = '';
+
+    const moviesGrid = document.getElementById('moviesGrid');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const pageTitle = document.getElementById('pageTitle');
+    const siteLogo = document.getElementById('siteLogo');
+    const moviesTab = document.getElementById('moviesTab');
+    const tvTab = document.getElementById('tvTab');
+    const randomBtn = document.getElementById('randomBtn');
+    const genresBar = document.getElementById('genresBar');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Modal elements
+    const movieModal = document.getElementById('movieModal');
+    const closeModal = document.getElementById('closeModal');
+    const modalBanner = document.getElementById('modalBanner');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMeta = document.getElementById('modalMeta');
+    const modalOverview = document.getElementById('modalOverview');
+    const providersList = document.getElementById('providersList');
+    const trailerBtn = document.getElementById('trailerBtn');
+
+    // Tema Değiştirici
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.getAttribute('data-theme') === 'light';
+      if (isLight) {
+        document.body.removeAttribute('data-theme');
+        themeToggle.textContent = '🌙';
+      } else {
+        document.body.setAttribute('data-theme', 'light');
+        themeToggle.textContent = '☀️';
+      }
+    });
+
+    // Tür Türlerini Yükle
+    async function loadGenres() {
+      const response = await fetch(`${BASE_URL}/genre/${currentMediaType}/list?api_key=${API_KEY}&language=tr-TR`);
+      const data = await response.json();
+      
+      genresBar.innerHTML = `<div class="genre-chip ${selectedGenreId === '' ? 'active' : ''}" data-id="">Tümü</div>`;
+      
+      if(data.genres) {
+        data.genres.forEach(genre => {
+          const chip = document.createElement('div');
+          chip.classList.add('genre-chip');
+          if (genre.id.toString() === selectedGenreId) chip.classList.add('active');
+          chip.textContent = genre.name;
+          chip.dataset.id = genre.id;
+          
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            selectedGenreId = genre.id.toString();
+            getContent();
+          });
+          
+          genresBar.appendChild(chip);
+        });
+      }
+
+      genresBar.querySelector('[data-id=""]').addEventListener('click', (e) => {
+        document.querySelectorAll('.genre-chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+        selectedGenreId = '';
+        getContent();
+      });
+    }
+
+    // İçerik Getir
+    async function getContent() {
+      let url = `${BASE_URL}/discover/${currentMediaType}?api_key=${API_KEY}&language=tr-TR&sort_by=popularity.desc`;
+      if (selectedGenreId) {
+        url += `&with_genres=${selectedGenreId}`;
+      }
+
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      const typeStr = currentMediaType === 'movie' ? 'Filmler' : 'Diziler';
+      pageTitle.textContent = selectedGenreId ? `Filtrelenmiş ${typeStr}` : `Popüler ${typeStr}`;
+      displayContent(data.results);
+    }
+
+    // Arama Yap
+    async function searchContent(query) {
+      if(!query) return;
+      const endpoint = currentMediaType === 'movie' ? 'search/movie' : 'search/tv';
+      const response = await fetch(`${BASE_URL}/${endpoint}?api_key=${API_KEY}&query=${encodeURIComponent(query)}&language=tr-TR`);
+      const data = await response.json();
+      pageTitle.textContent = `Arama Sonuçları: "${query}"`;
+      displayContent(data.results);
+    }
+
+    // Rastgele Öneri Motoru
+    async function getRandomContent() {
+      const randomPage = Math.floor(Math.random() * 5) + 1;
+      const response = await fetch(`${BASE_URL}/discover/${currentMediaType}?api_key=${API_KEY}&language=tr-TR&sort_by=vote_average.desc&vote_count.gte=500&page=${randomPage}`);
+      const data = await response.json();
+      
+      if (data.results && data.results.length > 0) {
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        openDetails(data.results[randomIndex].id);
+      }
+    }
+
+    // Detay Aç & Yayın Platformlarını Yükle
+    async function openDetails(id) {
+      const endpoint = currentMediaType === 'movie' ? `movie/${id}` : `tv/${id}`;
+      const response = await fetch(`${BASE_URL}/${endpoint}?api_key=${API_KEY}&language=tr-TR&append_to_response=videos,watch/providers`);
+      const item = await response.json();
+
+      const banner = item.backdrop_path ? BACKDROP_URL + item.backdrop_path : (item.poster_path ? IMAGE_URL + item.poster_path : '');
+      const title = item.title || item.name;
+      const releaseDate = item.release_date || item.first_air_date || 'N/A';
+      const releaseYear = releaseDate !== 'N/A' ? releaseDate.split('-')[0] : 'N/A';
+      const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+      const overview = item.overview || 'Bu içerik için Türkçe özet henüz mevcut değil.';
+
+      modalBanner.src = banner;
+      modalTitle.textContent = title;
+      modalMeta.textContent = `Yayın: ${releaseYear} | ★ IMDb: ${rating}`;
+      modalOverview.textContent = overview;
+
+      // YAYIN PLATFORMLARI
+      providersList.innerHTML = '';
+      const watchData = item['watch/providers'] ? item['watch/providers'].results : null;
+      const regionData = watchData ? (watchData.TR || watchData.US || Object.values(watchData)[0]) : null;
+
+      let providers = [];
+      if (regionData) {
+        const allTypes = [...(regionData.flatrate || []), ...(regionData.rent || []), ...(regionData.buy || []), ...(regionData.ads || [])];
+        const uniqueIds = new Set();
+        providers = allTypes.filter(p => {
+          if (!uniqueIds.has(p.provider_id)) {
+            uniqueIds.add(p.provider_id);
+            return true;
+          }
+          return false;
+        });
+      }
+
+      if (providers.length > 0) {
+        providers.forEach(p => {
+          const badge = document.createElement('div');
+          badge.classList.add('provider-badge');
+          badge.style.cursor = 'pointer';
+          badge.title = `${p.provider_name} üzerinde ara`;
+          badge.innerHTML = `
+            <img src="${IMAGE_URL + p.logo_path}" alt="${p.provider_name}">
+            <span>${p.provider_name}</span>
+          `;
+          
+          badge.addEventListener('click', () => {
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(title + ' ' + p.provider_name + ' izle')}`;
+            window.open(searchUrl, '_blank');
+          });
+
+          providersList.appendChild(badge);
+        });
+      } else {
+        const fallbackBtn = document.createElement('div');
+        fallbackBtn.classList.add('provider-badge');
+        fallbackBtn.style.cursor = 'pointer';
+        fallbackBtn.innerHTML = `🔍 Google'da İzleme Seçeneklerini Ara`;
+        fallbackBtn.addEventListener('click', () => {
+          window.open(`https://www.google.com/search?q=${encodeURIComponent(title + ' nerede izlenir')}`, '_blank');
+        });
+        providersList.appendChild(fallbackBtn);
+      }
+
+      // Fragman
+      const videos = item.videos ? item.videos.results : [];
+      const trailer = videos.find(v => v.type === 'Trailer' && v.site === 'YouTube') || videos[0];
+
+      if (trailer) {
+        trailerBtn.style.display = 'block';
+        trailerBtn.onclick = () => window.open(`https://www.youtube.com/watch?v=${trailer.key}`, '_blank');
+      } else {
+        trailerBtn.style.display = 'none';
+      }
+
+      movieModal.style.display = 'flex';
+    }
+
+    // Ekrana Bas
+    function displayContent(items) {
+      moviesGrid.innerHTML = '';
+      if (!items || items.length === 0) {
+        moviesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">İçerik bulunamadı.</p>';
+        return;
+      }
+
+      items.forEach(item => {
+        const title = item.title || item.name;
+        const poster = item.poster_path ? IMAGE_URL + item.poster_path : 'https://via.placeholder.com/500x750?text=Afi%C5%9F+Yok';
+        const rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
+
+        const card = document.createElement('div');
+        card.classList.add('movie-card');
+        card.innerHTML = `
+          <img src="${poster}" alt="${title}">
+          <div class="movie-info">
+            <div class="movie-title">${title}</div>
+            <div class="movie-rating">★ ${rating}</div>
+          </div>
+        `;
+
+        card.addEventListener('click', () => openDetails(item.id));
+        moviesGrid.appendChild(card);
+      });
+    }
+
+    // Event Listeners
+    moviesTab.addEventListener('click', () => {
+      if (currentMediaType === 'movie') return;
+      currentMediaType = 'movie';
+      selectedGenreId = '';
+      moviesTab.classList.add('active');
+      tvTab.classList.remove('active');
+      searchInput.value = '';
+      loadGenres();
+      getContent();
+    });
+
+    tvTab.addEventListener('click', () => {
+      if (currentMediaType === 'tv') return;
+      currentMediaType = 'tv';
+      selectedGenreId = '';
+      tvTab.classList.add('active');
+      moviesTab.classList.remove('active');
+      searchInput.value = '';
+      loadGenres();
+      getContent();
+    });
+
+    searchBtn.addEventListener('click', () => searchContent(searchInput.value));
+    searchInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') searchContent(searchInput.value); });
+    randomBtn.addEventListener('click', getRandomContent);
+    siteLogo.addEventListener('click', () => {
+      selectedGenreId = '';
+      searchInput.value = '';
+      loadGenres();
+      getContent();
+    });
+
+    closeModal.addEventListener('click', () => movieModal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === movieModal) movieModal.style.display = 'none'; });
+
+    // Başlat
+    loadGenres();
+    getContent();
+  </script>
+</body>
+</html>
