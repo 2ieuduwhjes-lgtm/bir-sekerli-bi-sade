@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bir Şekerli Bi Sade Filmler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1a21; --surface:#15262f; --line:#25404c; --text:#edf3f2; --sub:#8fa8b0;
+  --accent:#f2a444; --on-accent:#1a1205; --sugar:#cfe3ea; color-scheme:dark;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:#eef3f3; --surface:#ffffff; --line:#d3dfe2; --text:#0d1a21; --sub:#55707a;
+  --accent:#b8600c; --on-accent:#fff; --sugar:#0d1a21; color-scheme:light;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]):not([data-theme="light"]){
+    --bg:#eef3f3; --surface:#ffffff; --line:#d3dfe2; --text:#0d1a21; --sub:#55707a;
+    --accent:#b8600c; --on-accent:#fff; --sugar:#0d1a21; color-scheme:light;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;padding-bottom:40px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Üst bar */
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-weight:800;font-size:1.05rem;white-space:nowrap;line-height:1.1;text-align:left}
+.logo small{display:block;font:500 .65rem var(--sans);color:var(--sub);margin-top:2px}
+.search{flex:1;display:flex;max-width:460px;margin-left:auto}
+.search input{width:100%;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);outline:none}
+.search input:focus{border-color:var(--accent)}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:1rem;flex:none}
+
+/* Hero */
+.hero{position:relative;min-height:340px;display:flex;align-items:flex-end;overflow:hidden;background:var(--surface) center/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 4%,rgba(13,26,33,.55) 55%,rgba(13,26,33,.25))}
+:root[data-theme="light"] .hero::before{background:linear-gradient(to top,var(--bg) 4%,rgba(238,243,243,.6) 55%,rgba(238,243,243,.2))}
+.hero-in{position:relative;max-width:1200px;width:100%;margin:0 auto;padding:40px 16px 28px}
+.hero-tag{font-size:.8rem;color:var(--accent);font-weight:600;margin-bottom:6px}
+.hero h2{font-family:var(--serif);font-weight:800;font-size:clamp(1.8rem,6vw,3.4rem);line-height:1.05;max-width:16ch}
+.hero p{max-width:60ch;color:var(--text);opacity:.85;margin:10px 0 16px;font-size:.92rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:10px 18px;border-radius:999px;font-weight:600;font-size:.9rem;background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+
+/* Kontroller */
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:18px 0 10px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{padding:6px 14px;border-radius:999px;font-size:.85rem;color:var(--sub);font-weight:500}
+.seg button.on{background:var(--accent);color:var(--on-accent);font-weight:600}
+select{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:.85rem}
+.favs-btn{margin-left:auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:.85rem;font-weight:500}
+.favs-btn.on{border-color:var(--accent);color:var(--accent)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--sub);font-size:.82rem}
+.chip.on{background:var(--sugar);color:var(--bg);border-color:var(--sugar);font-weight:600}
+h3.title{font-family:var(--serif);font-size:1.4rem;margin:6px 0 16px}
+
+/* Izgara */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:18px 14px}
+.card{position:relative;text-align:left;display:block;width:100%}
+.poster{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.card:hover .poster img{transform:scale(1.04)}
+.score{position:absolute;left:8px;bottom:8px;background:rgba(13,26,33,.85);color:var(--accent);font-weight:600;font-size:.75rem;padding:2px 8px;border-radius:999px}
+.heart{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;background:rgba(13,26,33,.7);color:#fff;font-size:1rem;display:grid;place-items:center}
+.heart.on{color:#ff6b6b}
+.card .t{margin-top:8px;font-size:.85rem;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .y{font-size:.75rem;color:var(--sub)}
+.empty{grid-column:1/-1;text-align:center;color:var(--sub);padding:50px 10px}
+.more{display:block;margin:28px auto 0}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,10,14,.82);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.modal.open{display:flex}
+.sheet{background:var(--surface);border-radius:16px;max-width:520px;width:100%;overflow:hidden;position:relative;margin:auto;border:1px solid var(--line)}
+.x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:1.4rem;z-index:2}
+.banner{width:100%;height:210px;object-fit:cover;display:block;background:var(--line)}
+.body{padding:18px 20px 22px}
+.body h4{font-family:var(--serif);font-size:1.45rem;line-height:1.15}
+.tagline{color:var(--accent);font-size:.85rem;margin-top:4px}
+.meta{color:var(--sub);font-size:.82rem;margin:8px 0}
+.ov{font-size:.9rem;max-height:130px;overflow-y:auto;margin-bottom:12px}
+.cast{font-size:.82rem;color:var(--sub);margin-bottom:12px}
+.cast b{color:var(--text);font-weight:600}
+.prov{background:var(--bg);border-radius:10px;padding:10px;margin-bottom:14px}
+.prov-t{font-size:.78rem;color:var(--sub);margin-bottom:8px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:.75rem;font-weight:600}
+.badge img{width:20px;height:20px;border-radius:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.actions .wide{grid-column:1/-1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--sugar);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;font-weight:600;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:520px){.logo small{display:none}.search{max-width:none}.favs-btn{margin-left:0}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button class="logo" id="logo" aria-label="Ana sayfa">☕ Bir Şekerli Bi Sade<small>Kurucular: Lewzon &amp; Gemini</small></button>
+  <form class="search" id="searchForm" role="search">
+    <input id="q" type="search" placeholder="Film veya dizi ara" aria-label="Ara">
+  </form>
+  <button class="icon-btn" id="theme" aria-label="Temayı değiştir">🌙</button>
+</header>
+
+<section class="hero" id="hero">
+  <div class="hero-in">
+    <div class="hero-tag" id="heroTag">Bugün gündemde</div>
+    <h2 id="heroTitle">Yükleniyor</h2>
+    <p id="heroOv"></p>
+    <div class="row">
+      <button class="btn" id="heroOpen">Detayları gör</button>
+      <button class="btn ghost" id="randomBtn">🎲 Sürpriz getir</button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="controls">
+    <div class="seg" id="typeSeg">
+      <button class="on" data-type="movie">Filmler</button>
+      <button data-type="tv">Diziler</button>
+    </div>
+    <div class="seg" id="moodSeg" title="Şekerli: hafif ve neşeli. Sade: ağır ve gerçekçi.">
+      <button class="on" data-mood="">Hepsi</button>
+      <button data-mood="sweet">🍬 Şekerli</button>
+      <button data-mood="plain">☕ Sade</button>
+    </div>
+    <select id="sort" aria-label="Sırala">
+      <option value="popularity.desc">En popüler</option>
+      <option value="vote_average.desc">En yüksek puan</option>
+      <option value="new">En yeni</option>
+    </select>
+    <button class="favs-btn" id="favsBtn">♥ Listem <span id="favCount">0</span></button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <h3 class="title" id="pageTitle">Popüler filmler</h3>
+  <div class="grid" id="grid"></div>
+  <button class="btn ghost more" id="moreBtn" hidden>Daha fazla göster</button>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet">
+    <button class="x" id="closeBtn" aria-label="Kapat">&times;</button>
+    <img class="banner" id="mBanner" alt="">
+    <div class="body">
+      <h4 id="mTitle"></h4>
+      <div class="tagline" id="mTag"></div>
+      <div class="meta" id="mMeta"></div>
+      <p class="ov" id="mOv"></p>
+      <div class="cast" id="mCast"></div>
+      <div class="prov"><div class="prov-t">Nereden izlenir?</div><div class="badges" id="mProv"></div></div>
+      <div class="actions">
+        <button class="btn" id="mTrailer">▶ Fragman</button>
+        <button class="btn ghost" id="mFav">♡ Listeme ekle</button>
+        <button class="btn ghost wide" id="mShare">Arkadaşına öner</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const API_KEY='b3fe27b55bdcab2c4a1df4001e02c2b4', BASE='https://api.themoviedb.org/3';
+const IMG='https://image.tmdb.org/t/p/w500', BACK='https://image.tmdb.org/t/p/w1280';
+const MOODS={movie:{sweet:'35|10749|16|10751',plain:'18|53|80|99'},tv:{sweet:'35|10751|16',plain:'18|80|9648|99'}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const S={type:'movie',genre:'',mood:'',sort:'popularity.desc',page:1,mode:'browse',query:'',heroId:null,cur:null};
+let favs=[];
+try{favs=JSON.parse(localStorage.getItem('bsbs-favs')||'[]')}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem('bsbs-favs',JSON.stringify(favs))}catch(e){}$('favCount').textContent=favs.length};
+const isFav=(id,type)=>favs.some(f=>f.id===id&&f.type===type);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+async function api(path,params=''){const r=await fetch(`${BASE}/${path}?api_key=${API_KEY}&language=tr-TR${params}`);return r.json()}
+
+/* Tema */
+function setTheme(t){document.documentElement.dataset.theme=t;$('theme').textContent=t==='light'?'☀️':'🌙';try{localStorage.setItem('bsbs-theme',t)}catch(e){}}
+let saved=null;try{saved=localStorage.getItem('bsbs-theme')}catch(e){}
+setTheme(saved||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'));
+$('theme').onclick=()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light');
+
+/* Tür çipleri */
+async function loadGenres(){
+  const d=await api(`genre/${S.type}/list`);
+  $('chips').innerHTML=`<button class="chip ${S.genre===''&&!S.mood?'on':''}" data-id="">Tümü</button>`+
+    (d.genres||[]).map(g=>`<button class="chip ${S.genre==g.id?'on':''}" data-id="${g.id}">${esc(g.name)}</button>`).join('');
+}
+$('chips').onclick=e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  S.genre=c.dataset.id;S.mood='';syncMood();S.mode='browse';
+  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+  load(true);
+};
+
+/* Segmentler */
+function syncMood(){document.querySelectorAll('#moodSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mood===S.mood))}
+$('typeSeg').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.dataset.type===S.type)return;
+  S.type=b.dataset.type;S.genre='';S.mood='';S.mode='browse';$('q').value='';
+  document.querySelectorAll('#typeSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  syncMood();loadGenres();loadHero();load(true);
+};
+$('moodSeg').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  S.mood=b.dataset.mood;S.genre='';S.mode='browse';syncMood();loadGenres();load(true);
+};
+$('sort').onchange=e=>{S.sort=e.target.value;S.mode='browse';load(true)};
+
+/* Liste yükleme */
+async function load(reset){
+  if(reset){S.page=1;$('grid').innerHTML=''}
+  const T=S.type==='movie'?'Filmler':'Diziler';
+  $('favsBtn').classList.toggle('on',S.mode==='favs');
+  if(S.mode==='favs'){
+    $('pageTitle').textContent='Listem';$('moreBtn').hidden=true;
+    render(favs.map(f=>({id:f.id,_type:f.type,title:f.title,poster_path:f.poster,vote_average:f.rating,date:f.date})),true);return;
+  }
+  let d;
+  if(S.mode==='search'){
+    d=await api(`search/${S.type}`,`&query=${encodeURIComponent(S.query)}&page=${S.page}`);
+    $('pageTitle').textContent=`“${S.query}” için sonuçlar`;
+  }else{
+    const today=new Date().toISOString().slice(0,10);
+    const dateKey=S.type==='movie'?'primary_release_date':'first_air_date';
+    let sort=S.sort,extra='';
+    if(sort==='new'){sort=dateKey+'.desc';extra=`&${dateKey}.lte=${today}&vote_count.gte=20`}
+    if(sort==='vote_average.desc')extra='&vote_count.gte=500';
+    const g=S.genre||(S.mood?MOODS[S.type][S.mood]:'');
+    d=await api(`discover/${S.type}`,`&sort_by=${sort}&page=${S.page}${extra}${g?`&with_genres=${encodeURIComponent(g)}`:''}`);
+    const m=S.mood==='sweet'?'Şekerli ':S.mood==='plain'?'Sade ':'';
+    $('pageTitle').textContent=S.genre?`Seçili türde ${T.toLowerCase()}`:`${m}${S.sort==='popularity.desc'?'Popüler':S.sort==='new'?'Yeni':'En yüksek puanlı'} ${T.toLowerCase()}`;
+  }
+  $('moreBtn').hidden=!(d.page<d.total_pages);
+  render(d.results||[],reset);
+}
+function render(items,reset){
+  const g=$('grid');
+  if(!items.length&&reset){g.innerHTML=`<p class="empty">${S.mode==='favs'?'Listen boş. Bir yapımın kalbine dokun, buraya gelsin.':'Sonuç bulunamadı.'}</p>`;return}
+  g.insertAdjacentHTML('beforeend',items.map(i=>{
+    const type=i._type||S.type,title=i.title||i.name||'',date=i.release_date||i.first_air_date||i.date||'';
+    const poster=i.poster_path?IMG+i.poster_path:'';
+    const r=i.vote_average?i.vote_average.toFixed(1):'';
+    return `<div class="card" data-id="${i.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${esc(i.poster_path||'')}" data-rating="${r}" data-date="${esc(date)}">
+      <button class="poster" style="display:block;width:100%" aria-label="${esc(title)} detayları">
+        ${poster?`<img src="${poster}" alt="${esc(title)}" loading="lazy">`:''}
+        ${r?`<span class="score">★ ${r}</span>`:''}
+      </button>
+      <button class="heart ${isFav(i.id,type)?'on':''}" aria-label="Listeme ekle">${isFav(i.id,type)?'♥':'♡'}</button>
+      <div class="t">${esc(title)}</div><div class="y">${date.slice(0,4)}</div></div>`}).join(''));
+}
+$('grid').onclick=e=>{
+  const c=e.target.closest('.card');if(!c)return;
+  const d=c.dataset,id=+d.id;
+  if(e.target.closest('.heart')){
+    toggleFav({id,type:d.type,title:d.title,poster:d.poster,rating:d.rating,date:d.date});
+    if(S.mode==='favs'){c.remove();if(!favs.length)load(true)}
+    else{const on=isFav(id,d.type),h=c.querySelector('.heart');h.classList.toggle('on',on);h.textContent=on?'♥':'♡'}
+    return;
+  }
+  openDetails(id,d.type);
+};
+function toggleFav(f){
+  const i=favs.findIndex(x=>x.id===f.id&&x.type===f.type);
+  if(i>=0){favs.splice(i,1);toast('Listeden çıkarıldı')}else{favs.unshift(f);toast('Listene eklendi')}
+  saveFavs();
+}
+$('moreBtn').onclick=()=>{S.page++;load(false)};
+$('favsBtn').onclick=()=>{S.mode=S.mode==='favs'?'browse':'favs';load(true)};
+
+/* Arama */
+$('searchForm').onsubmit=e=>{
+  e.preventDefault();const q=$('q').value.trim();if(!q)return;
+  S.query=q;S.mode='search';load(true);document.querySelector('main').scrollIntoView({behavior:'smooth'});
+};
+$('logo').onclick=()=>{S.genre='';S.mood='';S.mode='browse';$('q').value='';syncMood();loadGenres();load(true);scrollTo({top:0,behavior:'smooth'})};
+
+/* Hero */
+async function loadHero(){
+  const d=await api(`trending/${S.type}/day`);
+  const it=(d.results||[]).find(x=>x.backdrop_path);if(!it)return;
+  S.heroId=it.id;
+  $('hero').style.backgroundImage=`url(${BACK+it.backdrop_path})`;
+  $('heroTag').textContent=S.type==='movie'?'Bugün en çok izlenen film':'Bugün en çok izlenen dizi';
+  $('heroTitle').textContent=it.title||it.name;
+  $('heroOv').textContent=it.overview||'';
+}
+$('heroOpen').onclick=()=>S.heroId&&openDetails(S.heroId,S.type);
+$('randomBtn').onclick=async()=>{
+  const g=S.mood?MOODS[S.type][S.mood]:'';
+  const d=await api(`discover/${S.type}`,`&sort_by=vote_average.desc&vote_count.gte=500&page=${Math.floor(Math.random()*5)+1}${g?`&with_genres=${encodeURIComponent(g)}`:''}`);
+  const r=d.results||[];if(r.length)openDetails(r[Math.floor(Math.random()*r.length)].id,S.type);
+};
+
+/* Detay */
+async function openDetails(id,type){
+  const it=await api(`${type}/${id}`,'&append_to_response=videos,credits,watch/providers');
+  const title=it.title||it.name,date=it.release_date||it.first_air_date||'';
+  S.cur={id,type,title,poster:it.poster_path||'',rating:it.vote_average?it.vote_average.toFixed(1):'',date};
+  $('mBanner').src=it.backdrop_path?'https://image.tmdb.org/t/p/w780'+it.backdrop_path:(it.poster_path?IMG+it.poster_path:'');
+  $('mTitle').textContent=title;
+  $('mTag').textContent=it.tagline||'';
+  const run=it.runtime?`${Math.floor(it.runtime/60)} sa ${it.runtime%60} dk`:(it.number_of_seasons?`${it.number_of_seasons} sezon`:'');
+  $('mMeta').textContent=[date.slice(0,4),run,it.vote_average?`★ ${it.vote_average.toFixed(1)}`:'',(it.genres||[]).map(g=>g.name).join(', ')].filter(Boolean).join(' · ');
+  $('mOv').textContent=it.overview||'Bu yapım için Türkçe özet henüz yok.';
+  const cast=(it.credits?.cast||[]).slice(0,5).map(c=>c.name).join(', ');
+  $('mCast').innerHTML=cast?`<b>Oyuncular:</b> ${esc(cast)}`:'';
+
+  const w=it['watch/providers']?.results,reg=w?(w.TR||w.US||Object.values(w)[0]):null;
+  let list=[];
+  if(reg){const seen=new Set();list=[...(reg.flatrate||[]),...(reg.rent||[]),...(reg.buy||[]),...(reg.ads||[])].filter(p=>!seen.has(p.provider_id)&&seen.add(p.provider_id))}
+  const pb=$('mProv');pb.innerHTML='';
+  const mk=(html,q)=>{const b=document.createElement('button');b.className='badge';b.innerHTML=html;b.onclick=()=>window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank');pb.appendChild(b)};
+  if(list.length)list.forEach(p=>mk(`<img src="${IMG+p.logo_path}" alt=""><span>${esc(p.provider_name)}</span>`,`${title} ${p.provider_name} izle`));
+  else mk('🔍 Google’da izleme seçeneklerini ara',`${title} nerede izlenir`);
+
+  const vids=it.videos?.results||[],tr=vids.find(v=>v.type==='Trailer'&&v.site==='YouTube')||vids.find(v=>v.site==='YouTube');
+  $('mTrailer').style.display=tr?'':'none';
+  $('mTrailer').onclick=()=>window.open('https://www.youtube.com/watch?v='+tr.key,'_blank');
+  paintFav();
+  $('modal').classList.add('open');document.body.style.overflow='hidden';$('closeBtn').focus();
+}
+function paintFav(){$('mFav').textContent=isFav(S.cur.id,S.cur.type)?'♥ Listemde':'♡ Listeme ekle'}
+$('mFav').onclick=()=>{toggleFav(S.cur);paintFav();if(S.mode==='favs')load(true);else{document.querySelectorAll(`.card[data-id="${S.cur.id}"][data-type="${S.cur.type}"] .heart`).forEach(h=>{const on=isFav(S.cur.id,S.cur.type);h.classList.toggle('on',on);h.textContent=on?'♥':'♡'})}};
+$('mShare').onclick=async()=>{
+  const text=`“${S.cur.title}” izlemeni öneriyorum! (Bir Şekerli Bi Sade Filmler)`;
+  try{if(navigator.share){await navigator.share({title:S.cur.title,text,url:location.href})}else{await navigator.clipboard.writeText(text+' '+location.href);toast('Öneri kopyalandı')}}catch(e){}
+};
+function closeModal(){$('modal').classList.remove('open');document.body.style.overflow=''}
+$('closeBtn').onclick=closeModal;
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};
+addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* Başlat */
+saveFavs();loadGenres();loadHero();load(true);
+</script>
+</body>
+</html>
