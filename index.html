@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bir Şekerli Bi Sade Filmler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1a21; --surface:#15262f; --line:#25404c; --text:#edf3f2; --sub:#8fa8b0;
+  --accent:#f2a444; --on-accent:#1a1205; --sugar:#cfe3ea; color-scheme:dark;
+  --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+:root[data-theme="light"]{
+  --bg:#eef3f3; --surface:#ffffff; --line:#d3dfe2; --text:#0d1a21; --sub:#55707a;
+  --accent:#b8600c; --on-accent:#fff; --sugar:#0d1a21; color-scheme:light;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]):not([data-theme="light"]){
+    --bg:#eef3f3; --surface:#ffffff; --line:#d3dfe2; --text:#0d1a21; --sub:#55707a;
+    --accent:#b8600c; --on-accent:#fff; --sugar:#0d1a21; color-scheme:light;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.5;padding-bottom:40px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Üst bar */
+.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:12px;padding:10px 16px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-weight:800;font-size:1.05rem;white-space:nowrap;line-height:1.1;text-align:left}
+.logo small{display:block;font:500 .65rem var(--sans);color:var(--sub);margin-top:2px}
+.search{flex:1;display:flex;max-width:460px;margin-left:auto}
+.search input{width:100%;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface);outline:none}
+.search input:focus{border-color:var(--accent)}
+.icon-btn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:1rem;flex:none}
+
+/* Hero */
+.hero{position:relative;min-height:340px;display:flex;align-items:flex-end;overflow:hidden;background:var(--surface) center/cover no-repeat}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--bg) 4%,rgba(13,26,33,.55) 55%,rgba(13,26,33,.25))}
+:root[data-theme="light"] .hero::before{background:linear-gradient(to top,var(--bg) 4%,rgba(238,243,243,.6) 55%,rgba(238,243,243,.2))}
+.hero-in{position:relative;max-width:1200px;width:100%;margin:0 auto;padding:40px 16px 28px}
+.hero-tag{font-size:.8rem;color:var(--accent);font-weight:600;margin-bottom:6px}
+.hero h2{font-family:var(--serif);font-weight:800;font-size:clamp(1.8rem,6vw,3.4rem);line-height:1.05;max-width:16ch}
+.hero p{max-width:60ch;color:var(--text);opacity:.85;margin:10px 0 16px;font-size:.92rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:10px 18px;border-radius:999px;font-weight:600;font-size:.9rem;background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+
+/* Kontroller */
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:18px 0 10px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{padding:6px 14px;border-radius:999px;font-size:.85rem;color:var(--sub);font-weight:500}
+.seg button.on{background:var(--accent);color:var(--on-accent);font-weight:600}
+select{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:.85rem}
+.favs-btn{margin-left:auto;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:.85rem;font-weight:500}
+.favs-btn.on{border-color:var(--accent);color:var(--accent)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:6px 14px;border-radius:999px;border:1px solid var(--line);color:var(--sub);font-size:.82rem}
+.chip.on{background:var(--sugar);color:var(--bg);border-color:var(--sugar);font-weight:600}
+h3.title{font-family:var(--serif);font-size:1.4rem;margin:6px 0 16px}
+
+/* Izgara */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:18px 14px}
+.card{position:relative;text-align:left;display:block;width:100%}
+.poster{position:relative;aspect-ratio:2/3;border-radius:10px;overflow:hidden;background:var(--surface);border:1px solid var(--line)}
+.poster img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .25s}
+.card:hover .poster img{transform:scale(1.04)}
+.score{position:absolute;left:8px;bottom:8px;background:rgba(13,26,33,.85);color:var(--accent);font-weight:600;font-size:.75rem;padding:2px 8px;border-radius:999px}
+.heart{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;background:rgba(13,26,33,.7);color:#fff;font-size:1rem;display:grid;place-items:center}
+.heart.on{color:#ff6b6b}
+.card .t{margin-top:8px;font-size:.85rem;font-weight:500;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .y{font-size:.75rem;color:var(--sub)}
+.empty{grid-column:1/-1;text-align:center;color:var(--sub);padding:50px 10px}
+.more{display:block;margin:28px auto 0}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:100;background:rgba(5,10,14,.82);display:none;align-items:center;justify-content:center;padding:16px;overflow-y:auto}
+.modal.open{display:flex}
+.sheet{background:var(--surface);border-radius:16px;max-width:520px;width:100%;overflow:hidden;position:relative;margin:auto;border:1px solid var(--line)}
+.x{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:1.4rem;z-index:2}
+.banner{width:100%;height:210px;object-fit:cover;display:block;background:var(--line)}
+.body{padding:18px 20px 22px}
+.body h4{font-family:var(--serif);font-size:1.45rem;line-height:1.15}
+.tagline{color:var(--accent);font-size:.85rem;margin-top:4px}
+.meta{color:var(--sub);font-size:.82rem;margin:8px 0}
+.ov{font-size:.9rem;max-height:130px;overflow-y:auto;margin-bottom:12px}
+.cast{font-size:.82rem;color:var(--sub);margin-bottom:12px}
+.cast b{color:var(--text);font-weight:600}
+.prov{background:var(--bg);border-radius:10px;padding:10px;margin-bottom:14px}
+.prov-t{font-size:.78rem;color:var(--sub);margin-bottom:8px}
+.badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--line);background:var(--surface);border-radius:8px;font-size:.75rem;font-weight:600}
+.badge img{width:20px;height:20px;border-radius:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.actions .wide{grid-column:1/-1}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--sugar);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:.85rem;font-weight:600;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:520px){.logo small{display:none}.search{max-width:none}.favs-btn{margin-left:0}}
+.tools{display:flex;gap:8px;overflow-x:auto;align-items:center;padding:0 0 12px;scrollbar-width:none}
+.tools::-webkit-scrollbar{display:none}
+.tool{flex:none;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:.8rem}
+.tool.on{border-color:var(--accent);color:var(--accent)}
+.dots{display:flex;gap:6px;flex:none;margin-left:6px}
+.dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--line)}
+.dot.on{box-shadow:0 0 0 2px var(--accent)}
+.icon-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent)}
+.blind .ov,.blind .tagline,.blind .gen,.blind .cast,.blind #heroOv,.blind .chips{filter:blur(9px);user-select:none;pointer-events:none}
+.blind #mTrailer{filter:blur(6px);pointer-events:none}
+.crew{font-size:.82rem;color:var(--sub);margin-bottom:12px}.crew b{color:var(--text)}
+.plink{color:var(--accent);text-decoration:underline;font:inherit}
+#pop{z-index:120}#pop .body{padding:24px 20px}
+.sw-img{width:62%;display:block;margin:12px auto;border-radius:10px;border:1px solid var(--line)}
+.tl{list-style:none;max-height:60vh;overflow-y:auto;border-left:2px solid var(--line);margin:12px 0 0 6px}
+.tl button{display:flex;gap:10px;width:100%;text-align:left;padding:8px 12px;font-size:.88rem}
+.tl time{color:var(--accent);font-weight:600;min-width:2.8rem}.tl i{margin-left:auto;color:var(--sub);font-style:normal}
+.riddle{max-height:none;margin:12px 0;line-height:1.7}
+.mk{display:grid;gap:8px}.mk input,.mk select,.rin{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.cf{position:fixed;top:-14px;width:8px;height:14px;z-index:300;pointer-events:none;animation:fall 2.6s linear forwards}
+@keyframes fall{to{transform:translate(var(--dx),105vh) rotate(720deg)}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <button class="logo" id="logo" aria-label="Ana sayfa">☕ Bir Şekerli Bi Sade<small>Kurucular: Lewzon &amp; Gemini</small></button>
+  <form class="search" id="searchForm" role="search">
+    <input id="q" type="search" placeholder="Film veya dizi ara" aria-label="Ara">
+  </form>
+  <button class="icon-btn" id="blindBtn" aria-label="Kör izleme modu" aria-pressed="false" title="Kör İzleme Modu">🙈</button>
+  <button class="icon-btn" id="theme" aria-label="Temayı değiştir">🌙</button>
+</header>
+
+<section class="hero" id="hero">
+  <div class="hero-in">
+    <div class="hero-tag" id="heroTag">Bugün gündemde</div>
+    <h2 id="heroTitle">Yükleniyor</h2>
+    <p id="heroOv"></p>
+    <div class="row">
+      <button class="btn" id="heroOpen">Detayları gör</button>
+      <button class="btn ghost" id="randomBtn">🎲 Sürpriz getir</button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <div class="controls">
+    <div class="seg" id="typeSeg">
+      <button class="on" data-type="movie">Filmler</button>
+      <button data-type="tv">Diziler</button>
+    </div>
+    <div class="seg" id="moodSeg" title="Şekerli: hafif ve neşeli. Sade: ağır ve gerçekçi.">
+      <button class="on" data-mood="">Hepsi</button>
+      <button data-mood="sweet">🍬 Şekerli</button>
+      <button data-mood="plain">☕ Sade</button>
+    </div>
+    <select id="sort" aria-label="Sırala">
+      <option value="popularity.desc">En popüler</option>
+      <option value="vote_average.desc">En yüksek puan</option>
+      <option value="new">En yeni</option>
+    </select>
+    <button class="favs-btn" id="favsBtn">♥ Listem <span id="favCount">0</span></button>
+  </div>
+  <div class="tools">
+    <button class="tool" id="lateBtn">🌙 01:00’den önce biten</button>
+    <button class="tool" id="duelBtn">🤝 Ortak seçim</button>
+    <button class="tool" id="riddleBtn">🧩 Günün repliği</button>
+    <button class="tool" id="makerBtn">🎬 Kendi filmini çek</button>
+    <span class="dots" id="dots" role="group" aria-label="Atmosfer rengi">
+      <button class="dot" data-c="neon" style="background:#b44cff" title="Neon Mor" aria-label="Neon Mor"></button>
+      <button class="dot" data-c="night" style="background:#1d3a6e" title="Gece Mavisi" aria-label="Gece Mavisi"></button>
+      <button class="dot" data-c="sunset" style="background:#ff8a2b" title="Gün Batımı Turuncusu" aria-label="Gün Batımı Turuncusu"></button>
+      <button class="dot" data-c="black" style="background:#050505" title="Zifiri Siyah" aria-label="Zifiri Siyah"></button>
+      <button class="dot" data-c="pink" style="background:#ffc4dc" title="Pastel Pembe" aria-label="Pastel Pembe"></button>
+    </span>
+  </div>
+  <div class="chips" id="chips"></div>
+  <h3 class="title" id="pageTitle">Popüler filmler</h3>
+  <div class="grid" id="grid"></div>
+  <button class="btn ghost more" id="moreBtn" hidden>Daha fazla göster</button>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="sheet">
+    <button class="x" id="closeBtn" aria-label="Kapat">&times;</button>
+    <img class="banner" id="mBanner" alt="">
+    <div class="body">
+      <h4 id="mTitle"></h4>
+      <div class="tagline" id="mTag"></div>
+      <div class="meta" id="mMeta"></div>
+      <div class="meta" id="mEnd" hidden></div>
+      <p class="ov" id="mOv"></p>
+      <div class="cast" id="mCast"></div>
+      <div class="crew" id="mCrew"></div>
+      <div class="prov"><div class="prov-t">Nereden izlenir?</div><div class="badges" id="mProv"></div></div>
+      <div class="actions">
+        <button class="btn" id="mTrailer">▶ Fragman</button>
+        <button class="btn ghost" id="mFav">♡ Listeme ekle</button>
+        <button class="btn ghost wide" id="mShare">Arkadaşına öner</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="pop" role="dialog" aria-modal="true"><div class="sheet"><button class="x" id="popX" aria-label="Kapat">&times;</button><div class="body" id="popBody"></div></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const API_KEY='b3fe27b55bdcab2c4a1df4001e02c2b4', BASE='https://api.themoviedb.org/3';
+const IMG='https://image.tmdb.org/t/p/w500', BACK='https://image.tmdb.org/t/p/w1280';
+const MOODS={movie:{sweet:'35|10749|16|10751',plain:'18|53|80|99'},tv:{sweet:'35|10751|16',plain:'18|80|9648|99'}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const S={type:'movie',genre:'',mood:'',sort:'popularity.desc',page:1,mode:'browse',query:'',heroId:null,cur:null};
+let favs=[];
+try{favs=JSON.parse(localStorage.getItem('bsbs-favs')||'[]')}catch(e){}
+const saveFavs=()=>{try{localStorage.setItem('bsbs-favs',JSON.stringify(favs))}catch(e){}$('favCount').textContent=favs.length};
+const isFav=(id,type)=>favs.some(f=>f.id===id&&f.type===type);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+async function api(path,params=''){const r=await fetch(`${BASE}/${path}?api_key=${API_KEY}&language=tr-TR${params}`);return r.json()}
+
+/* Tema */
+function setTheme(t){document.documentElement.dataset.theme=t;$('theme').textContent=t==='light'?'☀️':'🌙';try{localStorage.setItem('bsbs-theme',t)}catch(e){}}
+let saved=null;try{saved=localStorage.getItem('bsbs-theme')}catch(e){}
+setTheme(saved||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'));
+$('theme').onclick=()=>setTheme(document.documentElement.dataset.theme==='light'?'dark':'light');
+
+/* Tür çipleri */
+async function loadGenres(){
+  const d=await api(`genre/${S.type}/list`);
+  $('chips').innerHTML=`<button class="chip ${S.genre===''&&!S.mood?'on':''}" data-id="">Tümü</button>`+
+    (d.genres||[]).map(g=>`<button class="chip ${S.genre==g.id?'on':''}" data-id="${g.id}">${esc(g.name)}</button>`).join('');
+}
+$('chips').onclick=e=>{
+  const c=e.target.closest('.chip');if(!c)return;
+  S.genre=c.dataset.id;S.mood='';syncMood();S.mode='browse';
+  document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===c));
+  load(true);
+};
+
+/* Segmentler */
+function syncMood(){document.querySelectorAll('#moodSeg button').forEach(b=>b.classList.toggle('on',b.dataset.mood===S.mood))}
+$('typeSeg').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.dataset.type===S.type)return;
+  S.type=b.dataset.type;S.genre='';S.mood='';S.mode='browse';$('q').value='';
+  document.querySelectorAll('#typeSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  syncMood();loadGenres();loadHero();load(true);
+};
+$('moodSeg').onclick=e=>{
+  const b=e.target.closest('button');if(!b)return;
+  S.mood=b.dataset.mood;S.genre='';S.mode='browse';syncMood();loadGenres();load(true);
+};
+$('sort').onchange=e=>{S.sort=e.target.value;S.mode='browse';load(true)};
+
+/* Liste yükleme */
+async function load(reset){
+  if(reset){S.page=1;$('grid').innerHTML=''}
+  const T=S.type==='movie'?'Filmler':'Diziler';
+  if(S.mode!=='color')document.querySelectorAll('.dot.on').forEach(d=>d.classList.remove('on'));
+  $('favsBtn').classList.toggle('on',S.mode==='favs');
+  if(S.mode==='favs'){
+    $('pageTitle').textContent='Listem';$('moreBtn').hidden=true;
+    render(favs.map(f=>({id:f.id,_type:f.type,title:f.title,poster_path:f.poster,vote_average:f.rating,date:f.date})),true);return;
+  }
+  let d;
+  if(S.mode==='search'){
+    d=await api(`search/${S.type}`,`&query=${encodeURIComponent(S.query)}&page=${S.page}`);
+    $('pageTitle').textContent=`“${S.query}” için sonuçlar`;
+  }else{
+    const today=new Date().toISOString().slice(0,10);
+    const dateKey=S.type==='movie'?'primary_release_date':'first_air_date';
+    let sort=S.sort,extra='';
+    if(sort==='new'){sort=dateKey+'.desc';extra=`&${dateKey}.lte=${today}&vote_count.gte=20`}
+    if(sort==='vote_average.desc')extra='&vote_count.gte=500';
+    if(S.late&&S.type==='movie')extra+=`&with_runtime.gte=60&with_runtime.lte=${lateMins()}`;
+    const g=S.genre||(S.mood?MOODS[S.type][S.mood]:'');
+    d=await api(`discover/${S.type}`,`&sort_by=${sort}&page=${S.page}${extra}${g?`&with_genres=${encodeURIComponent(g)}`:''}`);
+    const m=S.mood==='sweet'?'Şekerli ':S.mood==='plain'?'Sade ':'';
+    $('pageTitle').textContent=S.genre?`Seçili türde ${T.toLowerCase()}`:`${m}${S.sort==='popularity.desc'?'Popüler':S.sort==='new'?'Yeni':'En yüksek puanlı'} ${T.toLowerCase()}`;
+  }
+  $('moreBtn').hidden=!(d.page<d.total_pages);
+  render(d.results||[],reset);
+}
+function render(items,reset){
+  const g=$('grid');
+  if(!items.length&&reset){g.innerHTML=`<p class="empty">${S.mode==='favs'?'Listen boş. Bir yapımın kalbine dokun, buraya gelsin.':'Sonuç bulunamadı.'}</p>`;return}
+  g.insertAdjacentHTML('beforeend',items.map(i=>{
+    const type=i._type||S.type,title=i.title||i.name||'',date=i.release_date||i.first_air_date||i.date||'';
+    const poster=i.poster_path?IMG+i.poster_path:'';
+    const r=i.vote_average?i.vote_average.toFixed(1):'';
+    return `<div class="card" data-id="${i.id}" data-type="${type}" data-title="${esc(title)}" data-poster="${esc(i.poster_path||'')}" data-rating="${r}" data-date="${esc(date)}">
+      <button class="poster" style="display:block;width:100%" aria-label="${esc(title)} detayları">
+        ${poster?`<img src="${poster}" alt="${esc(title)}" loading="lazy">`:''}
+        ${r?`<span class="score">★ ${r}</span>`:''}
+      </button>
+      <button class="heart ${isFav(i.id,type)?'on':''}" aria-label="Listeme ekle">${isFav(i.id,type)?'♥':'♡'}</button>
+      <div class="t">${esc(title)}</div><div class="y">${date.slice(0,4)}</div></div>`}).join(''));
+}
+$('grid').onclick=e=>{
+  const c=e.target.closest('.card');if(!c)return;
+  const d=c.dataset,id=+d.id;
+  if(e.target.closest('.heart')){
+    toggleFav({id,type:d.type,title:d.title,poster:d.poster,rating:d.rating,date:d.date});
+    if(S.mode==='favs'){c.remove();if(!favs.length)load(true)}
+    else{const on=isFav(id,d.type),h=c.querySelector('.heart');h.classList.toggle('on',on);h.textContent=on?'♥':'♡'}
+    return;
+  }
+  openDetails(id,d.type);
+};
+function toggleFav(f){
+  const i=favs.findIndex(x=>x.id===f.id&&x.type===f.type);
+  if(i>=0){favs.splice(i,1);toast('Listeden çıkarıldı')}else{favs.unshift(f);toast('Listene eklendi')}
+  saveFavs();
+}
+$('moreBtn').onclick=()=>{S.page++;load(false)};
+$('favsBtn').onclick=()=>{S.mode=S.mode==='favs'?'browse':'favs';load(true)};
+
+/* Arama */
+$('searchForm').onsubmit=e=>{
+  e.preventDefault();const q=$('q').value.trim();if(!q)return;
+  S.query=q;S.mode='search';load(true);document.querySelector('main').scrollIntoView({behavior:'smooth'});
+};
+$('logo').onclick=()=>{S.genre='';S.mood='';S.mode='browse';$('q').value='';syncMood();loadGenres();load(true);scrollTo({top:0,behavior:'smooth'})};
+
+/* Hero */
+async function loadHero(){
+  const d=await api(`trending/${S.type}/day`);
+  const it=(d.results||[]).find(x=>x.backdrop_path);if(!it)return;
+  S.heroId=it.id;
+  $('hero').style.backgroundImage=`url(${BACK+it.backdrop_path})`;
+  $('heroTag').textContent=S.type==='movie'?'Bugün en çok izlenen film':'Bugün en çok izlenen dizi';
+  $('heroTitle').textContent=it.title||it.name;
+  $('heroOv').textContent=it.overview||'';
+}
+$('heroOpen').onclick=()=>S.heroId&&openDetails(S.heroId,S.type);
+$('randomBtn').onclick=async()=>{
+  const g=S.mood?MOODS[S.type][S.mood]:'';
+  const d=await api(`discover/${S.type}`,`&sort_by=vote_average.desc&vote_count.gte=500&page=${Math.floor(Math.random()*5)+1}${g?`&with_genres=${encodeURIComponent(g)}`:''}`);
+  const r=d.results||[];if(r.length)openDetails(r[Math.floor(Math.random()*r.length)].id,S.type);
+};
+
+/* Detay */
+async function openDetails(id,type){
+  const it=await api(`${type}/${id}`,'&append_to_response=videos,credits,watch/providers');
+  const title=it.title||it.name,date=it.release_date||it.first_air_date||'';
+  S.cur={id,type,title,poster:it.poster_path||'',rating:it.vote_average?it.vote_average.toFixed(1):'',date};
+  $('mBanner').src=it.backdrop_path?'https://image.tmdb.org/t/p/w780'+it.backdrop_path:(it.poster_path?IMG+it.poster_path:'');
+  $('mTitle').textContent=title;
+  $('mTag').textContent=it.tagline||'';
+  const run=it.runtime?`${Math.floor(it.runtime/60)} sa ${it.runtime%60} dk`:(it.number_of_seasons?`${it.number_of_seasons} sezon`:'');
+  $('mMeta').innerHTML=[esc(date.slice(0,4)),esc(run),it.vote_average?`★ ${it.vote_average.toFixed(1)}`:'',(it.genres||[]).length?`<span class="gen">${esc(it.genres.map(g=>g.name).join(', '))}</span>`:''].filter(Boolean).join(' · ');
+  $('mOv').textContent=it.overview||'Bu yapım için Türkçe özet henüz yok.';
+  const cast=(it.credits?.cast||[]).slice(0,5).map(c=>c.name).join(', ');
+  $('mCast').innerHTML=cast?`<b>Oyuncular:</b> ${esc(cast)}`:'';
+
+  const w=it['watch/providers']?.results,reg=w?(w.TR||w.US||Object.values(w)[0]):null;
+  let list=[];
+  if(reg){const seen=new Set();list=[...(reg.flatrate||[]),...(reg.rent||[]),...(reg.buy||[]),...(reg.ads||[])].filter(p=>!seen.has(p.provider_id)&&seen.add(p.provider_id))}
+  const pb=$('mProv');pb.innerHTML='';
+  const mk=(html,q)=>{const b=document.createElement('button');b.className='badge';b.innerHTML=html;b.onclick=()=>window.open('https://www.google.com/search?q='+encodeURIComponent(q),'_blank');pb.appendChild(b)};
+  if(list.length)list.forEach(p=>mk(`<img src="${IMG+p.logo_path}" alt=""><span>${esc(p.provider_name)}</span>`,`${title} ${p.provider_name} izle`));
+  else mk('🔍 Google’da izleme seçeneklerini ara',`${title} nerede izlenir`);
+
+  const vids=it.videos?.results||[],tr=vids.find(v=>v.type==='Trailer'&&v.site==='YouTube')||vids.find(v=>v.site==='YouTube');
+  $('mTrailer').style.display=tr?'':'none';
+  $('mTrailer').onclick=()=>window.open('https://www.youtube.com/watch?v='+tr.key,'_blank');
+  enrich(it);paintFav();
+  $('modal').classList.add('open');document.body.style.overflow='hidden';$('closeBtn').focus();
+}
+function paintFav(){$('mFav').textContent=isFav(S.cur.id,S.cur.type)?'♥ Listemde':'♡ Listeme ekle'}
+$('mFav').onclick=()=>{toggleFav(S.cur);paintFav();if(S.mode==='favs')load(true);else{document.querySelectorAll(`.card[data-id="${S.cur.id}"][data-type="${S.cur.type}"] .heart`).forEach(h=>{const on=isFav(S.cur.id,S.cur.type);h.classList.toggle('on',on);h.textContent=on?'♥':'♡'})}};
+$('mShare').onclick=async()=>{
+  const text=`“${S.cur.title}” izlemeni öneriyorum! (Bir Şekerli Bi Sade Filmler)`;
+  try{if(navigator.share){await navigator.share({title:S.cur.title,text,url:location.href})}else{await navigator.clipboard.writeText(text+' '+location.href);toast('Öneri kopyalandı')}}catch(e){}
+};
+function closeModal(){$('modal').classList.remove('open');document.body.style.overflow=''}
+$('closeBtn').onclick=closeModal;
+$('modal').onclick=e=>{if(e.target===$('modal'))closeModal()};
+addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+/* ===== Yeni özellikler ===== */
+let DK=null,RD=null,LINK='',MK={img:null};
+const pop=h=>{$('popBody').innerHTML=h;$('pop').classList.add('open');document.body.style.overflow='hidden'};
+function closePop(){$('pop').classList.remove('open');DK=null;RD=null;if(!$('modal').classList.contains('open'))document.body.style.overflow=''}
+$('popX').onclick=closePop;$('pop').onclick=e=>{if(e.target===$('pop'))closePop()};
+addEventListener('keydown',e=>{if(e.key==='Escape')closePop()});
+function confetti(){for(let i=0;i<70;i++){const s=document.createElement('i');s.className='cf';s.style.cssText=`left:${Math.random()*100}vw;background:hsl(${Math.random()*360},90%,60%);animation-delay:${Math.random()*.6}s;--dx:${Math.random()*200-100}px`;document.body.appendChild(s);setTimeout(()=>s.remove(),3300)}}
+
+/* 1. Kör izleme */
+function setBlind(on){document.body.classList.toggle('blind',on);$('blindBtn').setAttribute('aria-pressed',on);try{localStorage.setItem('bsbs-blind',on?'1':'0')}catch(e){}}
+$('blindBtn').onclick=()=>{const on=!document.body.classList.contains('blind');setBlind(on);toast(on?'Kör izleme açık: sadece hislerine güven':'Kör izleme kapalı')};
+try{setBlind(localStorage.getItem('bsbs-blind')==='1')}catch(e){}
+
+/* 3 + 7. Bitiş saati, Şekerli/Sade etiketi, ekip */
+const SW=[35,10749,16,10751,10402,10770],PL=[18,53,80,99,27,9648,36,10752,10768];
+function enrich(it){
+  const ids=(it.genres||[]).map(g=>g.id),s=ids.filter(i=>SW.includes(i)).length,p=ids.filter(i=>PL.includes(i)).length;
+  const crew=it.credits?.crew||[],pick=js=>crew.filter(c=>js.includes(c.job));
+  let dirs=pick(['Director']);if(!dirs.length)dirs=it.created_by||[];
+  const wr=[...new Set(pick(['Screenplay','Writer','Story']).map(c=>c.name))].slice(0,3),mu=pick(['Original Music Composer'])[0];
+  $('mCrew').innerHTML=`<div><b>${s>p?'🍬 Şekerli':'☕ Sade'}</b></div>`+
+    (dirs.length?`<div><b>Yönetmen:</b> ${dirs.slice(0,2).map(d=>`<button class="plink" data-pid="${d.id}" data-name="${esc(d.name)}">${esc(d.name)}</button>`).join(', ')}</div>`:'')+
+    (wr.length?`<div><b>Senaryo:</b> ${esc(wr.join(', '))}</div>`:'')+(mu?`<div><b>Müzik:</b> ${esc(mu.name)}</div>`:'');
+  const el=$('mEnd');
+  if(it.runtime){const t=new Date(Date.now()+it.runtime*6e4);el.textContent=`⏱ Şimdi başlarsan ${t.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}’de biter`;el.hidden=false}else el.hidden=true;
+}
+$('mCrew').onclick=e=>{const b=e.target.closest('.plink');if(b)filmo(b.dataset.pid,b.dataset.name)};
+async function filmo(pid,name){
+  pop(`<h4>${esc(name)}</h4><p class="meta">Filmografi yükleniyor…</p>`);
+  const d=await api(`person/${pid}/combined_credits`),seen=new Set(),dt=c=>c.release_date||c.first_air_date||'';
+  const L=(d.crew||[]).filter(c=>c.job==='Director'&&dt(c)&&!seen.has(c.media_type+c.id)&&seen.add(c.media_type+c.id)).sort((a,b)=>dt(a).localeCompare(dt(b)));
+  pop(`<h4>${esc(name)}</h4><p class="meta">Yönetmen zaman çizelgesi · ${L.length} yapım</p><ol class="tl">${L.map(c=>`<li><button data-open="${c.media_type}:${c.id}"><time>${dt(c).slice(0,4)}</time><span>${esc(c.title||c.name)}</span>${c.vote_average?`<i>★ ${c.vote_average.toFixed(1)}</i>`:''}</button></li>`).join('')}</ol>`);
+}
+function lateMins(){const n=new Date(),t=new Date(n);t.setHours(1,0,0,0);if(t<=n)t.setDate(t.getDate()+1);return Math.floor((t-n)/6e4)}
+$('lateBtn').onclick=()=>{S.late=!S.late;$('lateBtn').classList.toggle('on',S.late);if(S.late&&S.type!=='movie')toast('Bu filtre sadece filmler için');S.mode='browse';load(true)};
+
+/* 6. Renk paleti */
+const COL={neon:(h,s,l)=>s>.5&&l>.25&&l<.7&&h>=260&&h<=320,night:(h,s,l)=>h>=190&&h<=250&&s>.25&&l<.45,sunset:(h,s,l)=>h>=8&&h<=45&&s>.5&&l>.35,black:(h,s,l)=>l<.14,pink:(h,s,l)=>l>.62&&s>.3&&(h>=300||h<=20)};
+const CNAME={neon:'Neon Mor',night:'Gece Mavisi',sunset:'Gün Batımı Turuncusu',black:'Zifiri Siyah',pink:'Pastel Pembe'};
+function hsl(r,g,b){r/=255;g/=255;b/=255;const M=Math.max(r,g,b),m=Math.min(r,g,b),l=(M+m)/2,d=M-m;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));h=M===r?((g-b)/d)%6:M===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}return[h,s,l]}
+const scan=(p,k)=>new Promise(res=>{const im=new Image();im.crossOrigin='anonymous';im.onload=()=>{try{const c=document.createElement('canvas');c.width=20;c.height=30;const x=c.getContext('2d');x.drawImage(im,0,0,20,30);const d=x.getImageData(0,0,20,30).data;let n=0;for(let i=0;i<d.length;i+=4){const[h,s,l]=hsl(d[i],d[i+1],d[i+2]);if(COL[k](h,s,l))n++}res(n/600)}catch(e){res(0)}};im.onerror=()=>res(0);im.src='https://image.tmdb.org/t/p/w92'+p});
+$('dots').onclick=async e=>{
+  const b=e.target.closest('.dot');if(!b)return;const k=b.dataset.c;
+  toast('Afişler taranıyor…');S.mode='color';$('moreBtn').hidden=true;$('favsBtn').classList.remove('on');
+  const g=S.genre||(S.mood?MOODS[S.type][S.mood]:'');
+  const pages=await Promise.all([1,2,3].map(p=>api(`discover/${S.type}`,`&sort_by=popularity.desc&page=${p}${g?`&with_genres=${encodeURIComponent(g)}`:''}`)));
+  const items=pages.flatMap(d=>d.results||[]).filter(i=>i.poster_path),sc=await Promise.all(items.map(i=>scan(i.poster_path,k)));
+  const top=items.map((i,j)=>({i,s:sc[j]})).sort((a,b)=>b.s-a.s).slice(0,18).map(o=>o.i);
+  document.querySelectorAll('.dot').forEach(d=>d.classList.toggle('on',d===b));
+  $('grid').innerHTML='';$('pageTitle').textContent=`${CNAME[k]} atmosferi`;render(top,true);
+};
+
+/* 2. Ortak seçim */
+async function duelStart(){
+  const g=S.mood?MOODS.movie[S.mood]:'';
+  const d=await api('discover/movie',`&sort_by=popularity.desc&page=${1+Math.floor(Math.random()*3)}${g?`&with_genres=${encodeURIComponent(g)}`:''}`);
+  const items=(d.results||[]).filter(x=>x.poster_path).slice(0,10).map(x=>({id:x.id,title:x.title,poster:x.poster_path}));
+  DK={items,mine:'',theirs:null,i:0};swipeUI();
+}
+function swipeUI(){
+  const k=DK,m=k.items[k.i];if(!m)return duelDone();
+  pop(`<div class="meta">${k.i+1} / ${k.items.length}${k.theirs?' · Arkadaşın seni bekliyor':''} · sağa kaydır = beğen</div><img class="sw-img" src="${IMG+m.poster}" alt=""><h4 style="text-align:center">${esc(m.title)}</h4><div class="actions" style="margin-top:12px"><button class="btn ghost" data-v="0">✕ Geç</button><button class="btn" data-v="1">♥ İzlerim</button></div>`);
+}
+function vote(v){DK.mine+=v;DK.i++;swipeUI()}
+function duelDone(){
+  const k=DK;
+  if(k.theirs){
+    const i=[...k.mine].findIndex((v,j)=>v==='1'&&k.theirs[j]==='1'),m=k.items[i];
+    if(!m)return pop('<h4>😅 Ortak film çıkmadı</h4><p class="meta">Zevkleriniz farklı çıktı. Yeni bir tur başlatın!</p>');
+    confetti();pop(`<h4 style="text-align:center">🎉 Eşleştiniz!</h4><img class="sw-img" src="${IMG+m.poster}" alt=""><h4 style="text-align:center">${esc(m.title)}</h4><button class="btn" style="width:100%;margin-top:10px" data-open="movie:${m.id}">Detayları gör</button>`);
+  }else{
+    LINK=location.href.split('#')[0]+'#ortak-'+btoa(k.items.map(x=>x.id).join(',')+'|'+k.mine);
+    pop('<h4>Sıra arkadaşında 🤝</h4><p class="meta" style="margin:8px 0 14px">Linki gönder; o da kaydırsın, ikinizin de beğendiği ilk film konfetiyle açılsın.</p><button class="btn" data-act="share" style="width:100%">Linki gönder</button>');
+  }
+}
+async function duelJoin(h){
+  try{const[ids,bits]=atob(h.slice(7)).split('|');
+    const L=await Promise.all(ids.split(',').map(id=>api(`movie/${id}`)));
+    DK={items:L.map(x=>({id:x.id,title:x.title,poster:x.poster_path||''})),mine:'',theirs:bits,i:0};swipeUI();
+  }catch(e){toast('Link okunamadı')}
+}
+let tx=0;$('popBody').ontouchstart=e=>tx=e.touches[0].clientX;
+$('popBody').ontouchend=e=>{if(!DK||!DK.items[DK.i])return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>70)vote(dx>0?'1':'0')};
+
+/* 4. Replik düellosu */
+const norm=s=>String(s||'').toLocaleLowerCase('tr').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const wins=()=>{try{return +localStorage.getItem('bsbs-wins')||0}catch(e){return 0}};
+const rank=()=>{const w=wins();return `${['Çırak İzleyici','Kurgu Ustası','Baş Yönetmen'][w>=7?2:w>=3?1:0]} · ${w} doğru`};
+async function riddle(){
+  pop('<p class="meta">Bulmaca hazırlanıyor…</p>');
+  const day=Math.floor(Date.now()/864e5),d=await api('discover/movie',`&sort_by=popularity.desc&vote_count.gte=2000&page=${day%5+1}`);
+  const list=d.results||[],m=list[(day*7)%list.length];if(!m)return closePop();
+  const it=await api(`movie/${m.id}`);
+  const tw=new Set(norm(it.title+' '+(it.original_title||'')).split(' ').filter(w=>w.length>2));
+  const mask=(it.overview||it.tagline||'').split(/\s+/).map((w,i)=>{const n=norm(w);return tw.has(n)||(n.length>6&&i%3===0)?'▇'.repeat(Math.min(n.length||w.length,9)):w}).join(' ');
+  RD={it,mask,tries:0,key:new Date().toISOString().slice(0,10)};
+  try{const st=JSON.parse(localStorage.getItem('bsbs-riddle'));if(st&&st.key===RD.key)RD.done=st.res}catch(e){}
+  riddleUI();
+}
+function riddleUI(msg){
+  const R=RD,it=R.it;let h=`<h4>🧩 Günün Repliği</h4><p class="meta">${rank()}</p><p class="ov riddle">${esc(R.mask)}</p>`;
+  if(R.done){h+=`<p style="margin-bottom:12px">${R.done==='win'?'🎉 Doğru bildin!':'Bugünün filmi:'} <b>${esc(it.title)}</b>. Yarın yeni bulmaca gelir.</p><button class="btn" data-open="movie:${it.id}" style="width:100%">Detayları gör</button>`}
+  else{
+    if(R.tries>=1)h+=`<p class="meta">İpucu: ${it.tagline?`“${esc(it.tagline)}”`:esc((it.genres||[]).map(g=>g.name).join(', '))}</p>`;
+    if(R.tries>=2)h+=`<p class="meta">İpucu: ${(it.release_date||'').slice(0,4)} yapımı</p>`;
+    h+=`${msg?`<p class="meta" style="color:var(--accent)">${msg}</p>`:''}<input class="rin" id="rin" list="sugg" placeholder="Film adı (${3-R.tries} hak)" autocomplete="off"><datalist id="sugg"></datalist><button class="btn" data-act="guess" style="width:100%;margin-top:10px">Tahmin et</button>`;
+  }
+  pop(h);
+}
+function guess(){
+  const v=norm($('rin').value);if(!v)return;
+  const ok=[RD.it.title,RD.it.original_title].some(t=>norm(t)===v);RD.tries++;
+  if(ok||RD.tries>=3){RD.done=ok?'win':'lose';try{localStorage.setItem('bsbs-riddle',JSON.stringify({key:RD.key,res:RD.done}));if(ok)localStorage.setItem('bsbs-wins',wins()+1)}catch(e){}if(ok)confetti();riddleUI()}
+  else riddleUI(`Olmadı, ${3-RD.tries} hakkın kaldı`);
+}
+
+/* 5. Kendi filmini çek */
+const TPL=[['#0d1a21','#f2a444'],['#2b1055','#d53369'],['#0f2027','#2c9fb4'],['#1d2b0f','#e8d36a']];
+function maker(){
+  pop(`<h4>🎬 Kendi Filmini Çek</h4><canvas id="cv" width="600" height="900" style="width:100%;border-radius:10px;margin:10px 0"></canvas><div class="mk"><input id="mkT" placeholder="Film adı" maxlength="40" value="Gece Yarısı Kahvesi"><select id="mkM"><option value="sweet">🍬 Şekerli</option><option value="plain">☕ Sade</option></select><select id="mkS">${TPL.map((_,i)=>`<option value="${i}">Şablon ${i+1}</option>`).join('')}</select><input id="mkP" type="file" accept="image/*"></div><button class="btn" data-act="dl" style="width:100%;margin-top:10px">⬇ Afişi indir</button>`);
+  MK.img=null;drawPoster();try{document.fonts.load('800 64px Fraunces').then(drawPoster)}catch(e){}
+}
+function drawPoster(){
+  const c=$('cv');if(!c)return;const x=c.getContext('2d'),[a,b]=TPL[+$('mkS').value];
+  let g=x.createLinearGradient(0,0,0,900);g.addColorStop(0,a);g.addColorStop(1,b);x.fillStyle=g;x.fillRect(0,0,600,900);
+  if(MK.img){const i=MK.img,s=Math.max(600/i.width,900/i.height);x.globalAlpha=.85;x.drawImage(i,(600-i.width*s)/2,(900-i.height*s)/2,i.width*s,i.height*s);x.globalAlpha=1}
+  g=x.createLinearGradient(0,350,0,900);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(1,'rgba(0,0,0,.88)');x.fillStyle=g;x.fillRect(0,0,600,900);
+  x.textAlign='center';x.fillStyle='#fff';x.font='800 64px Fraunces,Georgia,serif';
+  const lines=[];let l='';($('mkT').value||'Adsız').toLocaleUpperCase('tr').split(' ').forEach(w=>{const t=l?l+' '+w:w;if(x.measureText(t).width>520&&l){lines.push(l);l=w}else l=t});lines.push(l);
+  lines.forEach((t,i)=>x.fillText(t,300,700-(lines.length-1-i)*70));
+  x.font='600 26px Inter,sans-serif';x.fillStyle=$('mkM').value==='sweet'?'#ff9ec7':'#cfe3ea';x.fillText($('mkM').value==='sweet'?'🍬 ŞEKERLİ':'☕ SADE',300,765);
+  x.font='500 19px Inter,sans-serif';x.fillStyle='rgba(255,255,255,.8)';x.fillText('BİR ŞEKERLİ Bİ SADE ORİJİNAL YAPIMI',300,860);
+}
+$('popBody').oninput=async e=>{
+  const t=e.target;
+  if(t.id==='mkP'&&t.files[0]){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{MK.img=im;drawPoster()};im.src=r.result};r.readAsDataURL(t.files[0])}
+  else if(t.id?.startsWith('mk'))drawPoster();
+  else if(t.id==='rin'&&t.value.length>2){const d=await api('search/movie',`&query=${encodeURIComponent(t.value)}`);$('sugg').innerHTML=(d.results||[]).slice(0,8).map(x=>`<option value="${esc(x.title)}">`).join('')}
+};
+$('popBody').onkeydown=e=>{if(e.key==='Enter'&&e.target.id==='rin')guess()};
+$('popBody').onclick=async e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.v!==undefined&&DK)vote(t.dataset.v);
+  else if(t.dataset.open){const[ty,id]=t.dataset.open.split(':');closePop();openDetails(+id,ty)}
+  else if(t.dataset.act==='guess')guess();
+  else if(t.dataset.act==='dl')$('cv').toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='sekerli-sade-afis.png';a.click()});
+  else if(t.dataset.act==='share'){try{if(navigator.share)await navigator.share({title:'Ortak seçim',url:LINK});else{await navigator.clipboard.writeText(LINK);toast('Link kopyalandı')}}catch(err){}}
+};
+$('duelBtn').onclick=duelStart;$('riddleBtn').onclick=riddle;$('makerBtn').onclick=maker;
+if(location.hash.startsWith('#ortak-'))duelJoin(location.hash);
+
+/* Başlat */
+saveFavs();loadGenres();loadHero();load(true);
+</script>
+</body>
+</html>
